@@ -1,0 +1,32 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+table.table > tbody > tr > td.square {
+  width: 34px;
+  height: 34px;
+  padding: 0px;
+  border: none;
+  display: inline-table;
+}
+
+input {
+  width: 34px;
+  height: 34px;
+  padding: 0px;
+  border: 1px black solid;
+}
+
+.black {
+  background-color: black;
+}
+
+.highlight:not(.black) {
+  background: rgba(100,149,237,0.8);
+}
+
+.weak-highlight:not(.black) {
+  background: rgba(100,149,237,0.3);
+}
