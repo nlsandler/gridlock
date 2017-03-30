@@ -6,6 +6,6 @@ import 'bootstrap/dist/css/bootstrap-theme.css';
 import './index.css';
 
 ReactDOM.render(
-  <Puzzle />,
+  <Puzzle size={5}/>,
   document.getElementById('root')
 );

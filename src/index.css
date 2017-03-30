@@ -4,24 +4,62 @@ body {
   font-family: sans-serif;
 }
 
+/* Navbar styling */
+
+.navbar.navbar-static-top {
+  margin-bottom: 0;
+}
+
+/* Toolbar styling */
+
+.row.toolbar {
+  border-top: 1px black solid;
+  border-bottom: 1px black solid;
+  padding: 1em;
+}
+
+/* Puzzle area styling */
+
+.row.puzzle {
+  padding: 1em 0em 0em 4em;
+}
+
+/* Grid styling */
+
 table.table > tbody > tr > td.square {
   width: 34px;
   height: 34px;
   padding: 0px;
-  border: none;
+  border: 1px black solid;
   display: inline-table;
+  position: relative;
 }
 
 input {
   width: 34px;
   height: 34px;
   padding: 0px;
-  border: 1px black solid;
+  border: none;
+}
+
+span.clueNum {
+  width: 25%;
+  height:25%;
+  position: absolute;
+  top: 1px;
+  left: 2px;
 }
 
 .black {
   background-color: black;
 }
+
+/* Clue styling */
+li.clue-list {
+  list-style: none;
+}
+
+/* Grid highlighting */
 
 .highlight:not(.black) {
   background: rgba(100,149,237,0.8);
