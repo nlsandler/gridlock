@@ -5,13 +5,15 @@ import './App.css';
 /*
 TODOs:
 - make clues go away when word start changes
-- make author/title editable
+- don't let grid break on smaller viewport
 - make it prettier
-- make it possible to delete letters
+- make it possible to delete letters (backspace)
+- don't have mouse turn into cursor hovering over squares
 - fix entering last letter in row/column
 - make arrows skip black squares/don't focus on black squares
 - hide cursor (or always have it at the beginning of text field)
 - download!
+- maybe make across/down scrollable?
 */
 
 /* Enum for direction */
@@ -64,9 +66,12 @@ function Toolbar(props) {
 }
 
 function PuzzleInfo(props) {
-    return <div>
-      <h1 className="puzzle-title">{props.title} <small>{props.author}</small></h1>
-    </div>;
+    return <form className="form-inline">
+      <input className="form-control" placeholder="Title"
+        value={props.title} onChange={(evt) => props.updateTitle(evt.target.value)}/>by
+      <input className="form-control" placeholder="Author"
+        value={props.author} onChange={(evt) => props.updateAuthor(evt.target.value)} />
+    </form>;
 }
 
 class Square extends Component {
@@ -265,9 +270,11 @@ class Grid extends Component {
     for (var i = 0; i < this.props.size; i++) {
       rows.push(this.renderRow(i));
     }
-    return <table className="table">
+    return <div className="table-responsive">
+      <table className="table">
         <tbody>{rows}</tbody>
-      </table>;
+      </table>
+    </div>;
   }
 }
 
@@ -302,13 +309,13 @@ class Clues extends Component {
 
 
     return <div className="row">
-            <div className="col-md-6" id="across">
+            <div className="col-md-5" id="across">
               <h3 className="clue-header">Across</h3>
               <ol className="clue-list">
                 {across}
               </ol>
             </div>
-            <div className="col-md-6" id="down">
+            <div className="col-md-5" id="down">
               <h3 className="clue-header">Down</h3>
               <ol className="clue-list">
                 {down}
@@ -322,8 +329,8 @@ class Puzzle extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      "title" : "Brian's amazing puzzle",
-      "author" : "Brian Hoey!",
+      "title" : "Lorem Ipsum",
+      "author" : "Brian Hoey",
       "letters" : Array(this.props.size).fill().map(() => Array(this.props.size).fill(l(""))),
       /*
         [l("T"), l("V"), l("S"), b(), l("T")],
@@ -407,6 +414,26 @@ class Puzzle extends Component {
       mode: this.state.mode,
     });
   }
+  updateAuthor(value) {
+    this.setState({
+      size: this.state.size,
+      title: this.state.title,
+      author: value,
+      letters: this.state.letters,
+      clues: this.state.clues,
+      mode: this.state.mode,
+    });
+  }
+  updateTitle(value) {
+    this.setState({
+      size: this.state.size,
+      title: value,
+      author: this.state.author,
+      letters: this.state.letters,
+      clues: this.state.clues,
+      mode: this.state.mode,
+    });
+  }
   render() {
     var [letters, clues] = generateClueNumbers(this.props.size,
       this.state.letters, this.state.clues);
@@ -415,11 +442,6 @@ class Puzzle extends Component {
             <div className="container-fluid">
               <Toolbar mode={this.state.mode} setMode={this.setMode.bind(this)} />
               <div className="row puzzle">
-                <div className="col-md-12">
-                  <PuzzleInfo title={this.state.title} author={this.state.author}/>
-                </div>
-              </div>
-              <div className="row puzzle">
                 <div className="col-md-6">
                     <Grid size={this.props.size} mode={this.state.mode}
                       letters={letters}
@@ -427,7 +449,9 @@ class Puzzle extends Component {
                       handleClick={(x,y) => this.handleClick(x,y)}/>
                 </div>
                 <div className="col-md-6">
-
+                  <PuzzleInfo title={this.state.title} author={this.state.author}
+                  updateAuthor={(value) => this.updateAuthor(value)}
+                  updateTitle={(value) => this.updateTitle(value)}/>
                   <Clues clues={clues} handleChange={(dir, key, value) => this.handleClueChange(dir, key, value)}/>
                 </div>
               </div>

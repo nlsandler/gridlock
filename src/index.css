@@ -10,6 +10,19 @@ body {
   margin-bottom: 0;
 }
 
+/* Puzzle info */
+
+h1.puzzle-info {
+  font-size: 1.8em;
+  font-weight: bold;
+  margin-top: 0.5em;
+}
+
+form.form-inline .form-control {
+  margin: 1em;
+  border-radius: 0px;
+}
+
 /* Toolbar styling */
 
 .row.toolbar {
@@ -70,6 +83,10 @@ h3.clue-header {
   font-variant: small-caps;
 }
 
+#down, #across {
+  padding: 0px;
+}
+
 ol.clue-list {
   padding-left: 0px;
 }
@@ -92,8 +109,15 @@ li.clue .input-group-addon {
   width: 2em;
 }
 
+li.clue .input-group {
+  width: 100%;
+}
+
 li.clue .form-control {
   border-radius: 0px;
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
 }
 
 /* Grid highlighting */
