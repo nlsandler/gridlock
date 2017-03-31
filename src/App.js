@@ -4,10 +4,14 @@ import './App.css';
 
 /*
 TODOs:
-- find another way to manage focus in the grid
+- make clues go away when word start changes
+- make author/title editable
+- make it prettier
+- make it possible to delete letters
 - fix entering last letter in row/column
-- make arrow navigation skip over black squares
-- hide cursor
+- make arrows skip black squares/don't focus on black squares
+- hide cursor (or always have it at the beginning of text field)
+- download!
 */
 
 /* Enum for direction */
@@ -61,24 +65,11 @@ function Toolbar(props) {
 
 function PuzzleInfo(props) {
     return <div>
-      <h1>{props.title} <small>{props.author}</small></h1>
+      <h1 className="puzzle-title">{props.title} <small>{props.author}</small></h1>
     </div>;
 }
 
 class Square extends Component {
-  /*
-  componentDidMount() {
-    if (this.props.isSelected) {
-      this.refs.square.focus();
-    }
-  }
-
-  componentDidUpdate() {
-    if (this.props.isSelected) {
-      this.refs.square.focus();
-    }
-  }
-  */
   render() {
     var classes = "text-center";
     if (this.props.squareValue.isBlack) {
@@ -100,8 +91,7 @@ class Square extends Component {
           onKeyPress={(evt) => this.props.handleKeyPress(evt.key)}
           onKeyUp={(evt) => this.props.handleKeyUp(evt.key)}
           onFocus={() => this.props.handleFocus()}
-          onClick={() => this.props.handleClick()}
-          disabled={this.props.squareValue.isBlack}/>
+          onClick={() => this.props.handleClick()}/>
       </td>
     );
   }
@@ -204,12 +194,10 @@ class Grid extends Component {
         break;
       }
 
+      //TODO: refactor (same code is in arrow key handler)
       var newSquareRef = this.refs[newSquare.toString()];
-      console.log(newSquareRef);
       var input = newSquareRef.refs.input;
-      console.log(input);
       input.focus();
-
   }
   handleKeyPress(key) {
     if (this.props.mode === mode.TEXT) {
@@ -233,9 +221,7 @@ class Grid extends Component {
 
       //now change focus to new square
       var newSquare = this.refs[[x2,y2].toString()];
-      console.log(newSquare);
       var input = newSquare.refs.input;
-      console.log(input);
       input.focus();
 
       //now update Puzzle state
@@ -287,9 +273,11 @@ class Grid extends Component {
 
 class Clue extends Component {
   render() {
-    return <li className="clue-list">
-      {this.props.clue.id + ". " }
-      <input value={this.props.clue.text} onChange={(evt) => this.props.handleChange(evt.target.value)}/>
+    return <li className="clue">
+      <div className="input-group">
+      <div className="input-group-addon">{this.props.clue.id}</div>
+      <input className="form-control" value={this.props.clue.text} onChange={(evt) => this.props.handleChange(evt.target.value)}/>
+      </div>
     </li>
   }
 }
@@ -315,14 +303,14 @@ class Clues extends Component {
 
     return <div className="row">
             <div className="col-md-6" id="across">
-              <h3>Across</h3>
-              <ol>
+              <h3 className="clue-header">Across</h3>
+              <ol className="clue-list">
                 {across}
               </ol>
             </div>
             <div className="col-md-6" id="down">
-              <h3>Down</h3>
-              <ol>
+              <h3 className="clue-header">Down</h3>
+              <ol className="clue-list">
                 {down}
               </ol>
             </div>
@@ -334,15 +322,17 @@ class Puzzle extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      "title" : "Monday Mini",
-      "author" : "Joel Fagliano",
-      "letters" : [
+      "title" : "Brian's amazing puzzle",
+      "author" : "Brian Hoey!",
+      "letters" : Array(this.props.size).fill().map(() => Array(this.props.size).fill(l(""))),
+      /*
         [l("T"), l("V"), l("S"), b(), l("T")],
         [l("H"), l("E"), l("L"), l("L"), l("O")],
         [l("R"), l("E"), l("E"), l("L"), l("S")],
         [l("E"), b(), l("E"), l("E"), l("S")],
         [l("E"), l("S"), l("P"), l("N"), b()]
-      ],
+
+      ],*/
       "clues" : {
         "across" : {
           "0,0" : {"text" : "foo"}
@@ -430,13 +420,14 @@ class Puzzle extends Component {
                 </div>
               </div>
               <div className="row puzzle">
-                <div className="col-md-7">
+                <div className="col-md-6">
                     <Grid size={this.props.size} mode={this.state.mode}
                       letters={letters}
                       handleKeyPress={(x,y,c) => this.handleKeyPress(x,y,c)}
                       handleClick={(x,y) => this.handleClick(x,y)}/>
                 </div>
-                <div className="col-md-5">
+                <div className="col-md-6">
+
                   <Clues clues={clues} handleChange={(dir, key, value) => this.handleClueChange(dir, key, value)}/>
                 </div>
               </div>
@@ -518,7 +509,11 @@ function generateClueNumbers(size, letters, clues) {
       }
 
       if (needsAcross || needsDown) {
-        letters[x][y].clueNum = currentClueNum;
+        letters[x][y] = {
+          "char": letters[x][y].char,
+          "isBlack" : letters[x][y].isBlack,
+          "clueNum":currentClueNum
+        };
         currentClueNum++;
       }
     }

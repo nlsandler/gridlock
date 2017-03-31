@@ -26,6 +26,11 @@ body {
 
 /* Grid styling */
 
+table.table {
+  border: 1px black solid;
+  width: auto;
+}
+
 table.table > tbody > tr > td.square {
   width: 34px;
   height: 34px;
@@ -33,6 +38,10 @@ table.table > tbody > tr > td.square {
   border: 1px black solid;
   display: inline-table;
   position: relative;
+}
+
+table.table > tbody > tr > td.square input {
+  cursor: none;
 }
 
 input {
@@ -55,8 +64,36 @@ span.clueNum {
 }
 
 /* Clue styling */
-li.clue-list {
+h3.clue-header {
+  padding-left: 3em;
+  font-weight: bolder;
+  font-variant: small-caps;
+}
+
+ol.clue-list {
+  padding-left: 0px;
+}
+
+li.clue {
   list-style: none;
+
+}
+
+li.clue .input-group-addon {
+  border-radius: 0px;
+  background: transparent;
+  border: 0px;
+  width: 4em;
+  font-size: 0.9em;
+  font-weight: bolder;
+  vertical-align: top;
+  padding: 0px;
+  padding-top: 3px;
+  width: 2em;
+}
+
+li.clue .form-control {
+  border-radius: 0px;
 }
 
 /* Grid highlighting */
