@@ -8,11 +8,11 @@ TODOs:
 - don't let grid break on smaller viewport
 - make it prettier
 - make it possible to delete letters (backspace)
-- don't have mouse turn into cursor hovering over squares
-- fix entering last letter in row/column
 - make arrows skip black squares/don't focus on black squares
 - hide cursor (or always have it at the beginning of text field)
 - download!
+- when a word is highlighted in grid, highlight corresponding clue (and vice versa)
+- accessibility
 - maybe make across/down scrollable?
 */
 
@@ -200,9 +200,11 @@ class Grid extends Component {
       }
 
       //TODO: refactor (same code is in arrow key handler)
-      var newSquareRef = this.refs[newSquare.toString()];
-      var input = newSquareRef.refs.input;
-      input.focus();
+      if (newSquare[0] < this.props.size && newSquare[1] < this.props.size) {
+        var newSquareRef = this.refs[newSquare.toString()];
+        var input = newSquareRef.refs.input;
+        input.focus();
+      }
   }
   handleKeyPress(key) {
     if (this.props.mode === mode.TEXT) {
@@ -212,12 +214,12 @@ class Grid extends Component {
       var x2 = x;
       var y2 = y;
       do {
-        if (this.state.direction === direction.ROW) {
+        if (this.state.direction === direction.ROW && y2 < this.props.size - 1) {
            y2++;
-         } else {
+         } else if (this.state.direction === direction.COL && x2 < this.props.size - 1){
            x2++;
         }
-      } while (this.props.letters[x2][y2].isBlack);
+      } while (x2 < this.props.size - 2 && y2 < this.props.size - 2 && this.props.letters[x2][y2].isBlack);
 
       this.setState({
         "currentSquare" : [x2,y2],

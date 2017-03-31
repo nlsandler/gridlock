@@ -41,6 +41,7 @@ form.form-inline .form-control {
 
 table.table {
   border: 1px black solid;
+  page-break-inside: avoid;
   width: auto;
 }
 
@@ -54,7 +55,7 @@ table.table > tbody > tr > td.square {
 }
 
 table.table > tbody > tr > td.square input {
-  cursor: none;
+  cursor: default;
 }
 
 input {
