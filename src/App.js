@@ -4,15 +4,15 @@ import './App.css';
 
 /*
 TODOs:
-- make clues go away when word start changes
 - don't let grid break on smaller viewport
 - make it prettier
 - make it possible to delete letters (backspace)
 - make arrows skip black squares/don't focus on black squares
-- hide cursor (or always have it at the beginning of text field)
+- make it less laggy!
 - download!
 - when a word is highlighted in grid, highlight corresponding clue (and vice versa)
 - accessibility
+
 - maybe make across/down scrollable?
 */
 
@@ -66,9 +66,11 @@ function Toolbar(props) {
 }
 
 function PuzzleInfo(props) {
-    return <form className="form-inline">
+    return <form className="form">
+      <label>Title</label>
       <input className="form-control" placeholder="Title"
-        value={props.title} onChange={(evt) => props.updateTitle(evt.target.value)}/>by
+        value={props.title} onChange={(evt) => props.updateTitle(evt.target.value)}/>
+      <label>Author</label>
       <input className="form-control" placeholder="Author"
         value={props.author} onChange={(evt) => props.updateAuthor(evt.target.value)} />
     </form>;
@@ -94,7 +96,7 @@ class Square extends Component {
           ref="input"
           value={this.props.squareValue.char}
           onKeyPress={(evt) => this.props.handleKeyPress(evt.key)}
-          onKeyUp={(evt) => this.props.handleKeyUp(evt.key)}
+          onKeyDown={(evt) => this.props.handleKeyDown(evt.key)}
           onFocus={() => this.props.handleFocus()}
           onClick={() => this.props.handleClick()}/>
       </td>
@@ -141,7 +143,7 @@ class Grid extends Component {
       }
     }
   }
-  handleKeyUp(key) {
+  handleKeyDown(key) {
     let newDirection = this.state.direction;
     let newSquare = this.state.currentSquare.slice();
     switch (key) {
@@ -252,7 +254,7 @@ class Grid extends Component {
       isSelected={isSelected}
       isWordSelected={isWordSelected}
       handleKeyPress={(char) => this.handleKeyPress(char)}
-      handleKeyUp={(key) => this.handleKeyUp(key)}
+      handleKeyDown={(key) => this.handleKeyDown(key)}
       handleFocus={() => this.handleFocus(x,y)}
       handleClick={() => this.props.handleClick(x,y)}
       ref={[x,y].toString()}
@@ -293,7 +295,7 @@ class Clue extends Component {
 
 class Clues extends Component {
   renderClue(dir, key, clue) {
-    return <Clue key={key} clue={clue} handleChange={(value) => this.props.handleChange(dir, key, value)}/>
+    return <Clue key={key} clue={clue} handleChange={(value) => this.props.handleChange(clue.id, dir, key, value)}/>
   }
   render() {
     var across = [];
@@ -330,33 +332,29 @@ class Clues extends Component {
 class Puzzle extends Component {
   constructor(props) {
     super(props);
+    //initialize array of letters
+    let letters = Array(this.props.size).fill().map(() => Array(this.props.size).fill(l("")));
+    let clues = {
+      "across" : {},
+      "down" : {}
+    };
+    //initialize clue numbers
+    let [numberedLetters, numberedClues] = generateClueNumbers(this.props.size, letters, clues);
     this.state = {
       "title" : "Lorem Ipsum",
       "author" : "Brian Hoey",
-      "letters" : Array(this.props.size).fill().map(() => Array(this.props.size).fill(l(""))),
-      /*
-        [l("T"), l("V"), l("S"), b(), l("T")],
-        [l("H"), l("E"), l("L"), l("L"), l("O")],
-        [l("R"), l("E"), l("E"), l("L"), l("S")],
-        [l("E"), b(), l("E"), l("E"), l("S")],
-        [l("E"), l("S"), l("P"), l("N"), b()]
-
-      ],*/
-      "clues" : {
-        "across" : {
-          "0,0" : {"text" : "foo"}
-        },
-        "down" : {}
-      },
+      "letters" : numberedLetters,
+      "clues" : numberedClues,
       "mode" : mode.TEXT
     }
   }
   updateLetters(letters) {
+    var [numberedLetters, numberedClues] = generateClueNumbers(this.props.size, letters, this.state.clues);
     this.setState({
       title: this.state.title,
       author: this.state.author,
-      letters: letters,
-      clues: this.state.clues,
+      letters: numberedLetters,
+      clues: numberedClues,
       mode: this.state.mode
     });
   }
@@ -395,11 +393,14 @@ class Puzzle extends Component {
       })
     }
   }
-  handleClueChange(dir, key,value) {
+  handleClueChange(num,dir,key,value) {
     let cluesAcross = this.state.clues.across;
     let cluesDown = this.state.clues.down;
     if (dir === direction.ROW) {
-      cluesAcross[key] = {"text":value};
+      cluesAcross[key] = {
+        "id" : num,
+        "text": value
+      };
     } else {
       cluesDown[key] = {"text":value};
     }
@@ -437,8 +438,8 @@ class Puzzle extends Component {
     });
   }
   render() {
-    var [letters, clues] = generateClueNumbers(this.props.size,
-      this.state.letters, this.state.clues);
+    //var [letters, clues] = generateClueNumbers(this.props.size,
+      //this.state.letters, this.state.clues);
     return <div>
             <Navbar />
             <div className="container-fluid">
@@ -446,7 +447,7 @@ class Puzzle extends Component {
               <div className="row puzzle">
                 <div className="col-md-6">
                     <Grid size={this.props.size} mode={this.state.mode}
-                      letters={letters}
+                      letters={this.state.letters}
                       handleKeyPress={(x,y,c) => this.handleKeyPress(x,y,c)}
                       handleClick={(x,y) => this.handleClick(x,y)}/>
                 </div>
@@ -454,7 +455,7 @@ class Puzzle extends Component {
                   <PuzzleInfo title={this.state.title} author={this.state.author}
                   updateAuthor={(value) => this.updateAuthor(value)}
                   updateTitle={(value) => this.updateTitle(value)}/>
-                  <Clues clues={clues} handleChange={(dir, key, value) => this.handleClueChange(dir, key, value)}/>
+                  <Clues clues={this.state.clues} handleChange={(num, dir, key, value) => this.handleClueChange(num, dir, key, value)}/>
                 </div>
               </div>
             </div>
@@ -505,43 +506,51 @@ function needsDownClue(letters, x, y) {
     return false;
 }
 
-function generateClueNumbers(size, letters, clues) {
+function generateClueNumbers(size, origLetters, origClues) {
   //add clue numbers to letters in grid and to clues in map
-
+  let letters = origLetters.slice();
+  let clues = {
+    "across" : {},
+    "down" : {}
+  }
   var currentClueNum = 1;
 
   for (var x = 0; x < size; x++) {
     for (var y = 0; y < size; y++) {
-      var clueKey = [x,y].toString();
+      let clueKey = [x,y].toString();
 
-      var needsAcross = needsAcrossClue(letters, x, y);
+      let needsAcross = needsAcrossClue(letters, x, y);
+
       if (needsAcross) {
-        var clue = clues.across[clueKey];
-        if (!clue) {
-          clue = {"text":""};
+        let acrossClue = origClues.across[clueKey];
+        if (!acrossClue) {
+          acrossClue = { "text" : "" };
         }
-        clue.id = currentClueNum;
-        clues.across[clueKey] = clue;
+        acrossClue.id = currentClueNum;
+        clues.across[clueKey] = acrossClue;
       }
 
-      var needsDown = needsDownClue(letters, x, y);
+      let needsDown = needsDownClue(letters, x, y);
+
       if (needsDown) {
-        var clue = clues.down[clueKey];
-        if (!clue) {
-          clue = {"text":""};
+        let downClue = origClues.down[clueKey];
+        if (!downClue) {
+          downClue = {"text":""};
         }
-        clue.id = currentClueNum;
-        clues.down[clueKey] = clue;
+        downClue.id = currentClueNum;
+        clues.down[clueKey] = downClue;
       }
 
+      let gridNum = null;
       if (needsAcross || needsDown) {
-        letters[x][y] = {
-          "char": letters[x][y].char,
-          "isBlack" : letters[x][y].isBlack,
-          "clueNum":currentClueNum
-        };
+        gridNum = currentClueNum;
         currentClueNum++;
       }
+      letters[x][y] = {
+        "char": letters[x][y].char,
+        "isBlack" : letters[x][y].isBlack,
+        "clueNum": gridNum
+      };
     }
   }
 

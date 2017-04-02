@@ -39,6 +39,10 @@ form.form-inline .form-control {
 
 /* Grid styling */
 
+.table-responsive {
+  overflow-x: auto;
+}
+
 table.table {
   border: 1px black solid;
   page-break-inside: avoid;
