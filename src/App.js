@@ -6,7 +6,6 @@ import './App.css';
 TODOs:
 - don't let grid break on smaller viewport
 - make it prettier
-- make it possible to delete letters (backspace)
 - make arrows skip black squares/don't focus on black squares
 - make it less laggy!
 - download!
