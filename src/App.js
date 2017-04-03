@@ -108,8 +108,8 @@ class Grid extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      "currentSquare" : [0,1],
-      "direction" : direction.COL
+      "currentSquare" : [0,0],
+      "direction" : direction.ROW
     };
   }
   inSelectedWord(x,y) {
@@ -147,6 +147,24 @@ class Grid extends Component {
     let newDirection = this.state.direction;
     let newSquare = this.state.currentSquare.slice();
     switch (key) {
+      case "Backspace":
+        let x = newSquare[0];
+        let y = newSquare[1];
+        let letter = this.props.letters[x][y];
+        if (!letter.char) {
+          if (this.state.direction == direction.ROW){
+            //TODO refactor!
+            if (newSquare[1] > 0) {
+              newSquare[1]--;
+            }
+          } else {
+            if (newSquare[0] > 0) {
+              newSquare[0]--;
+            }
+          }
+        }
+        this.props.handleBackSpace(newSquare[0],newSquare[1]);
+        break;
       case "ArrowLeft":
         if (this.state.direction === direction.ROW) {
           if (newSquare[1] > 0) {
@@ -381,6 +399,12 @@ class Puzzle extends Component {
       this.updateLetters(letters);
     }
   }
+  handleBackSpace(x, y) {
+    const letters = this.state.letters.slice();
+    let letter = letters[x][y];
+    letter.char = "";
+    this.updateLetters(letters);
+  }
   setMode(mode) {
     if (mode !== this.state.mode) {
       this.setState({
@@ -449,6 +473,7 @@ class Puzzle extends Component {
                     <Grid size={this.props.size} mode={this.state.mode}
                       letters={this.state.letters}
                       handleKeyPress={(x,y,c) => this.handleKeyPress(x,y,c)}
+                      handleBackSpace={(x,y) => this.handleBackSpace(x,y)}
                       handleClick={(x,y) => this.handleClick(x,y)}/>
                 </div>
                 <div className="col-md-6">
