@@ -90,14 +90,16 @@ class Square extends Component {
 
     return (
       <td className="square">
-        <span className="clueNum"><sup>{this.props.squareValue.clueNum}</sup></span>
-        <input className={classes}
-          ref="input"
-          value={this.props.squareValue.char}
-          onKeyPress={(evt) => this.props.handleKeyPress(evt.key)}
-          onKeyDown={(evt) => this.props.handleKeyDown(evt.key)}
-          onFocus={() => this.props.handleFocus()}
-          onClick={() => this.props.handleClick()}/>
+        <div className="content">
+          <span className="clueNum"><sup>{this.props.squareValue.clueNum}</sup></span>
+          <input className={classes}
+            ref="input"
+            value={this.props.squareValue.char}
+            onKeyPress={(evt) => this.props.handleKeyPress(evt.key)}
+            onKeyDown={(evt) => this.props.handleKeyDown(evt.key)}
+            onFocus={() => this.props.handleFocus()}
+            onClick={() => this.props.handleClick()}/>
+        </div>
       </td>
     );
   }
@@ -461,8 +463,6 @@ class Puzzle extends Component {
     });
   }
   render() {
-    //var [letters, clues] = generateClueNumbers(this.props.size,
-      //this.state.letters, this.state.clues);
     return <div>
             <Navbar />
             <div className="container-fluid">
