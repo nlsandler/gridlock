@@ -27,21 +27,6 @@ var mode = {
 }
 
 /* Components */
-
-function Navbar(props) {
-  //<Toolbar mode={this.state.mode} setMode={this.setMode.bind(this)} />
-  return <nav className="navbar navbar-inverse sidebar">
-           <div class="container-fluid">
-             <div class="navbar-header">
-               <a className="navbar-brand" href="#">Gridlock</a>
-             </div>
-           </div>
-           <div className="collapse navbar-collapse">
-             <Toolbar />
-           </div>
-         </nav>;
-}
-
 function Toolbar(props) {
 
   return <div className="toolbar" data-toggle="buttons">
@@ -62,19 +47,6 @@ function Toolbar(props) {
       <span className="glyphicon glyphicon-tint" />
     </label>
   </div>
-/*
-  return <ul className="nav navbar-nav">
-          <li>
-            <button type="button" className="btn btn-default" aria-label="Save">
-              <span className="glyphicon glyphicon-font" aria-hidden="true"></span>
-            </button>
-          </li>
-          <li>
-            <button type="button" className="btn btn-default" aria-label="Save">
-              <span className="glyphicon glyphicon-save" aria-hidden="true"></span>
-            </button>
-          </li>
-        </ul>; */
 }
 
 function PuzzleInfo(props) {
@@ -235,6 +207,8 @@ class Grid extends Component {
           "direction" : newDirection
         });
         break;
+      default:
+        //intentional no-op
       }
 
       //TODO: refactor (same code is in arrow key handler)
@@ -404,8 +378,6 @@ class Puzzle extends Component {
   }
   handleClick(x, y) {
     const letters = this.state.letters.slice();
-    //look up whether it's black
-    const currentlyBlack = letters[x][y].isBlack;
 
     if (this.state.mode === mode.BLOCK) {
       //fill in specified square
@@ -509,13 +481,6 @@ function l(c) {
   return {
     "isBlack" : false,
     "char" : c
-  }
-}
-
-function b() {
-  return {
-    "isBlack" : true,
-    "char" : ""
   }
 }
 
