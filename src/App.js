@@ -29,49 +29,67 @@ var mode = {
 /* Components */
 
 function Navbar(props) {
-  return <nav className="navbar navbar-inverse navbar-static-top">
-           <a className="navbar-brand" href="#">Gridlock</a>
-           <div id="navbar" className="collapse navbar-collapse"></div>
+  //<Toolbar mode={this.state.mode} setMode={this.setMode.bind(this)} />
+  return <nav className="navbar navbar-inverse sidebar">
+           <div class="container-fluid">
+             <div class="navbar-header">
+               <a className="navbar-brand" href="#">Gridlock</a>
+             </div>
+           </div>
+           <div className="collapse navbar-collapse">
+             <Toolbar />
+           </div>
          </nav>;
 }
 
 function Toolbar(props) {
-  return <div className="row toolbar">
-          <div className="col-md-9">
-            <div className="btn-group" data-toggle="buttons">
-              <label className={props.mode ? "btn btn-primary" : "btn btn-primary active"}>
-                <input type="radio"
-                  id="edit-letters"
-                  autoComplete="off"
-                  defaultChecked={!props.mode}
-                  onClick={() => props.setMode(mode.TEXT)}/>
-                Edit Letters
-              </label>
-              <label className={props.mode ? "btn btn-primary active" : "btn btn-primary"}>
-                <input type="radio"
-                  id="fill-squares"
-                  autoComplete="off"
-                  defaultChecked={props.mode}
-                  onClick={() => props.setMode(mode.BLOCK)}/>
-                Square Fill
-              </label>
-            </div>
-          </div>
-          <div className="col-md-3">
-            <button className="btn btn-primary">Download</button>
-          </div>
-        </div>;
+
+  return <div className="toolbar" data-toggle="buttons">
+    <label className={props.mode ? "btn btn-primary" : "btn btn-primary active"}>
+      <input type="radio"
+        id="edit-letters"
+        autoComplete="off"
+        defaultChecked={!props.mode}
+        onClick={() => props.setMode(mode.TEXT)}/>
+      <span className="glyphicon glyphicon-font" />
+    </label>
+    <label className={props.mode ? "btn btn-primary active" : "btn btn-primary"}>
+      <input type="radio"
+        id="fill-squares"
+        autoComplete="off"
+        defaultChecked={props.mode}
+        onClick={() => props.setMode(mode.BLOCK)}/>
+      <span className="glyphicon glyphicon-tint" />
+    </label>
+  </div>
+/*
+  return <ul className="nav navbar-nav">
+          <li>
+            <button type="button" className="btn btn-default" aria-label="Save">
+              <span className="glyphicon glyphicon-font" aria-hidden="true"></span>
+            </button>
+          </li>
+          <li>
+            <button type="button" className="btn btn-default" aria-label="Save">
+              <span className="glyphicon glyphicon-save" aria-hidden="true"></span>
+            </button>
+          </li>
+        </ul>; */
 }
 
 function PuzzleInfo(props) {
-    return <form className="form">
-      <label>Title</label>
-      <input className="form-control" placeholder="Title"
-        value={props.title} onChange={(evt) => props.updateTitle(evt.target.value)}/>
-      <label>Author</label>
-      <input className="form-control" placeholder="Author"
-        value={props.author} onChange={(evt) => props.updateAuthor(evt.target.value)} />
-    </form>;
+    return <div className="puzzle-info">
+              <input className="form-control" type="text" aria-label="Title" placeholder="Untitled"
+              value={props.title} onChange={(evt) => props.updateTitle(evt.target.value)}/>
+              <hr />
+              <form className="form form-inline">
+                <small>
+                  <label>By:</label>
+                  <input className="form-control" type="text" aria-label="Author" placeholder="Author"
+              value={props.author} onChange={(evt) => props.updateAuthor(evt.target.value)} />
+                </small>
+              </form>
+          </div>;
 }
 
 class Square extends Component {
@@ -152,7 +170,7 @@ class Grid extends Component {
         let y = newSquare[1];
         let letter = this.props.letters[x][y];
         if (!letter.char) {
-          if (this.state.direction == direction.ROW){
+          if (this.state.direction === direction.ROW){
             //TODO refactor!
             if (newSquare[1] > 0) {
               newSquare[1]--;
@@ -359,8 +377,8 @@ class Puzzle extends Component {
     //initialize clue numbers
     let [numberedLetters, numberedClues] = generateClueNumbers(this.props.size, letters, clues);
     this.state = {
-      "title" : "Lorem Ipsum",
-      "author" : "Brian Hoey",
+      "title" : "",
+      "author" : "",
       "letters" : numberedLetters,
       "clues" : numberedClues,
       "mode" : mode.TEXT
@@ -414,7 +432,7 @@ class Puzzle extends Component {
         letters: this.state.letters,
         clues: this.state.clues,
         mode: mode,
-      })
+      });
     }
   }
   handleClueChange(num,dir,key,value) {
@@ -463,11 +481,15 @@ class Puzzle extends Component {
   }
   render() {
     return <div>
-            <Navbar />
             <div className="container-fluid">
-              <Toolbar mode={this.state.mode} setMode={this.setMode.bind(this)} />
               <div className="row puzzle">
-                <div className="col-md-6">
+                <div className="col-md-1">
+                  <Toolbar mode={this.state.mode} setMode={this.setMode.bind(this)} />
+                </div>
+                <div className="col-md-5">
+                    <PuzzleInfo title={this.state.title} author={this.state.author}
+                    updateAuthor={(value) => this.updateAuthor(value)}
+                    updateTitle={(value) => this.updateTitle(value)}/>
                     <Grid size={this.props.size} mode={this.state.mode}
                       letters={this.state.letters}
                       handleKeyPress={(x,y,c) => this.handleKeyPress(x,y,c)}
@@ -475,9 +497,6 @@ class Puzzle extends Component {
                       handleClick={(x,y) => this.handleClick(x,y)}/>
                 </div>
                 <div className="col-md-6">
-                  <PuzzleInfo title={this.state.title} author={this.state.author}
-                  updateAuthor={(value) => this.updateAuthor(value)}
-                  updateTitle={(value) => this.updateTitle(value)}/>
                   <Clues clues={this.state.clues} handleChange={(num, dir, key, value) => this.handleClueChange(num, dir, key, value)}/>
                 </div>
               </div>
@@ -569,6 +588,7 @@ function generateClueNumbers(size, origLetters, origClues) {
         gridNum = currentClueNum;
         currentClueNum++;
       }
+
       letters[x][y] = {
         "char": letters[x][y].char,
         "isBlack" : letters[x][y].isBlack,

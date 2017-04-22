@@ -1,46 +1,115 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  font-family: Helvetica, sans-serif;
 }
+
 
 /* Navbar styling */
-
-.navbar.navbar-static-top {
-  margin-bottom: 0;
+/*
+.navbar.sidebar {
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin-left: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  border-radius: 0;
 }
 
+nav.sidebar li {
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+}
+*/
+
+/* Toolbar Styling */
+.toolbar .btn.btn-primary {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  box-shadow: none !important;
+  border: solid 1px #ddd;
+  margin: 2px;
+  background: white;
+  color: black;
+  text-shadow: none;
+}
+
+.toolbar .btn.btn-primary.active {
+  background-color: #286090;
+  border: none;
+  color: white;
+}
+
+.toolbar .btn span.glyphicon {
+  vertical-align: middle;
+}
 /* Puzzle info */
-
-h1.puzzle-info {
-  font-size: 1.8em;
-  font-weight: bold;
-  margin-top: 0.5em;
+.puzzle-info input.form-control {
+  border: none;
+  border-bottom: 1px transparent solid;
+  box-shadow: none;
+  font-size: 1.5em;
+  font-variant: small-caps;
+  margin-right: 1em;
+  transition-property: none;
+  width: inherit;
+  padding: 0px;
+  color: black;
 }
 
-form.form-inline .form-control {
-  margin: 1em;
+.puzzle-info .form-control:focus {
+  box-shadow: none;
+  //border-bottom: 1px #777777 solid;
   border-radius: 0px;
 }
 
-/* Toolbar styling */
+.puzzle-info .form-control::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: #777777;
+  font-style: italic;
+}
 
-.row.toolbar {
-  border-top: 1px black solid;
-  border-bottom: 1px black solid;
-  padding: 1em;
+.puzzle-info .small {
+  margin-top: -3px;
+}
+
+.puzzle-info small .form-control {
+  padding-left: 0.5em;
+  font-size: 1.2em;
+  line-height: 1em;
+  margin-bottom: 3px;
+}
+
+.puzzle-info small label {
+  margin-bottom: 1px;
+  font-size: 1.2em;
+  line-height: 1em;
+  height: 34px;
+  font-variant: small-caps;
+}
+
+hr {
+  margin: 1px;
+  border-color: black;
+  width: 90%;
 }
 
 /* Puzzle area styling */
 
 .row.puzzle {
-  padding: 1em 0em 0em 4em;
+  padding: 1em 0em 0em 0em;
 }
 
 /* Grid styling */
 
 .table-responsive {
   overflow-x: auto;
+  margin-left: 0em;
+  margin-top: 1em;
 }
 
 table.table {
