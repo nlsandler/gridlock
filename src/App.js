@@ -342,21 +342,30 @@ class Clues extends Component {
 class Puzzle extends Component {
   constructor(props) {
     super(props);
-    //initialize array of letters
-    let letters = Array(this.props.size).fill().map(() => Array(this.props.size).fill(l("")));
-    let clues = {
-      "across" : {},
-      "down" : {}
-    };
-    //initialize clue numbers
-    let [numberedLetters, numberedClues] = generateClueNumbers(this.props.size, letters, clues);
-    this.state = {
-      "title" : "",
-      "author" : "",
-      "letters" : numberedLetters,
-      "clues" : numberedClues,
-      "mode" : mode.TEXT
+    //load puzzle from localStorage if we have it
+    const puzzleState = localStorage.getItem('puzzle');
+    if (puzzleState) {
+      this.state = JSON.parse(puzzleState);
+    } else {
+      //initialize array of letters
+      let letters = Array(this.props.size).fill().map(() => Array(this.props.size).fill(l("")));
+      let clues = {
+        "across" : {},
+        "down" : {}
+      };
+      //initialize clue numbers
+      let [numberedLetters, numberedClues] = generateClueNumbers(this.props.size, letters, clues);
+      this.state = {
+        "title" : "",
+        "author" : "",
+        "letters" : numberedLetters,
+        "clues" : numberedClues,
+        "mode" : mode.TEXT
+      }
     }
+  }
+  componentDidUpdate(prevProps, prevState) {
+    localStorage.setItem('puzzle', JSON.stringify(this.state));
   }
   updateLetters(letters) {
     var [numberedLetters, numberedClues] = generateClueNumbers(this.props.size, letters, this.state.clues);
