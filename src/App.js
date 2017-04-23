@@ -4,14 +4,16 @@ import './App.css';
 
 /*
 TODOs:
-- make it prettier
+- refactor
+- download!
+- don't highlight/focus when in square fill mode
+- include some sort of tooltip/explanation of fill/letter modes
 - make arrows skip black squares/don't focus on black squares
 - make it less laggy!
-- download!
 - when a word is highlighted in grid, highlight corresponding clue (and vice versa)
 - accessibility
 
-- maybe make across/down scrollable?
+- maybe make across/down clues scrollable?
 */
 
 /* Enum for direction */
@@ -24,6 +26,13 @@ var direction = {
 var mode = {
   TEXT: 0,
   BLOCK: 1
+}
+
+/* Utility functions */
+function focusOnSquare(component, square) {
+  var squareRef = component.refs[square.toString()];
+  var input = squareRef.refs.input;
+  input.focus();
 }
 
 /* Components */
@@ -211,11 +220,8 @@ class Grid extends Component {
         //intentional no-op
       }
 
-      //TODO: refactor (same code is in arrow key handler)
       if (newSquare[0] < this.props.size && newSquare[1] < this.props.size) {
-        var newSquareRef = this.refs[newSquare.toString()];
-        var input = newSquareRef.refs.input;
-        input.focus();
+        focusOnSquare(this, newSquare);
       }
   }
   handleKeyPress(key) {
@@ -239,9 +245,7 @@ class Grid extends Component {
       });
 
       //now change focus to new square
-      var newSquare = this.refs[[x2,y2].toString()];
-      var input = newSquare.refs.input;
-      input.focus();
+      focusOnSquare(this, [x2,y2]);
 
       //now update Puzzle state
       this.props.handleKeyPress(x,y,key);
