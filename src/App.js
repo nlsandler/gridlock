@@ -16,23 +16,57 @@ TODOs:
 - maybe make across/down clues scrollable?
 */
 
-/* Enum for direction */
-var direction = {
+/* Enum for orientation */
+const orientation = {
   ROW: 0,
   COL: 1
 };
 
+const direction = {
+  BACK: 0,
+  FORWARD: 1
+};
+
 /* Enum for edit mode */
-var mode = {
+const mode = {
   TEXT: 0,
   BLOCK: 1
-}
+};
 
 /* Utility functions */
 function focusOnSquare(component, square) {
   var squareRef = component.refs[square.toString()];
   var input = squareRef.refs.input;
   input.focus();
+}
+
+function navigateInDirection(current, dir, size) {
+  if (dir === direction.FORWARD &&
+  current < size - 1) {
+    return current + 1;
+  } else if (dir === direction.BACK &&
+  current > 0) {
+    return current - 1;
+  } else {
+    return current;
+  }
+}
+
+function navigate(orient, direct, currentOrientation, currentSquare, size) {
+  let newOrient = orient, newX = currentSquare[0], newY = currentSquare[1];
+  if (orient === currentOrientation) {
+    if (orient === orientation.ROW) {
+      newY = navigateInDirection(newY, direct, size);
+    } else {
+      newX = navigateInDirection(newX, direct, size);
+    }
+  } else {
+    //don't move cursor, just change oirentation
+    newOrient = orient;
+  }
+
+  let newSquare = [newX, newY];
+  return [newOrient, newSquare];
 }
 
 /* Components */
@@ -108,11 +142,11 @@ class Grid extends Component {
     super(props);
     this.state = {
       "currentSquare" : [0,0],
-      "direction" : direction.ROW
+      "orientation" : orientation.ROW
     };
   }
   inSelectedWord(x,y) {
-    if (this.state.direction === direction.ROW) {
+    if (this.state.orientation === orientation.ROW) {
       if (x === this.state.currentSquare[0]) {
         //make sure there are no black squares between currentSquare and this square
         for (var idx = Math.min(y, this.state.currentSquare[1]);
@@ -143,77 +177,44 @@ class Grid extends Component {
     }
   }
   handleKeyDown(key) {
-    let newDirection = this.state.direction;
+    let newOrientation = this.state.orientation;
     let newSquare = this.state.currentSquare.slice();
     switch (key) {
       case "Backspace":
-        let x = newSquare[0];
-        let y = newSquare[1];
-        let letter = this.props.letters[x][y];
-        if (!letter.char) {
-          if (this.state.direction === direction.ROW){
-            //TODO refactor!
-            if (newSquare[1] > 0) {
-              newSquare[1]--;
-            }
-          } else {
-            if (newSquare[0] > 0) {
-              newSquare[0]--;
-            }
-          }
-        }
+        [newOrientation, newSquare] = navigate(newOrientation,
+          direction.BACK, newOrientation, newSquare, this.props.size);
         this.props.handleBackSpace(newSquare[0],newSquare[1]);
         break;
       case "ArrowLeft":
-        if (this.state.direction === direction.ROW) {
-          if (newSquare[1] > 0) {
-            newSquare[1]--;
-          }
-        } else {
-          newDirection = direction.ROW;
-        }
+        [newOrientation, newSquare] = navigate(orientation.ROW,
+        direction.BACK, newOrientation, newSquare, this.props.size);
         this.setState({
           "currentSquare" : newSquare,
-          "direction" : newDirection
+          "orientation" : newOrientation
         });
         break;
       case "ArrowUp":
-        if (this.state.direction === direction.COL) {
-          if (newSquare[0] > 0) {
-            newSquare[0]--;
-          }
-        } else {
-          newDirection = direction.COL;
-        }
+        [newOrientation, newSquare] = navigate(orientation.COL,
+        direction.BACK, newOrientation, newSquare, this.props.size);
         this.setState({
           "currentSquare" : newSquare,
-          "direction" : newDirection
+          "orientation" : newOrientation
         });
         break;
       case "ArrowRight":
-        if (this.state.direction === direction.ROW) {
-          if (newSquare[1] < this.props.size - 1) {
-            newSquare[1]++;
-          }
-        } else {
-          newDirection = direction.ROW;
-        }
+      [newOrientation, newSquare] = navigate(orientation.ROW,
+      direction.FORWARD, newOrientation, newSquare, this.props.size);
         this.setState({
           "currentSquare" : newSquare,
-          "direction" : newDirection
+          "orientation" : newOrientation
         });
         break;
       case "ArrowDown":
-        if (this.state.direction === direction.COL) {
-          if (newSquare[0] < this.props.size - 1) {
-            newSquare[0]++;
-          }
-        } else {
-          newDirection = direction.COL;
-        }
+      [newOrientation, newSquare] = navigate(orientation.COL,
+      direction.FORWARD, newOrientation, newSquare, this.props.size);
         this.setState({
           "currentSquare" : newSquare,
-          "direction" : newDirection
+          "orientation" : newOrientation
         });
         break;
       default:
@@ -232,16 +233,16 @@ class Grid extends Component {
       var x2 = x;
       var y2 = y;
       do {
-        if (this.state.direction === direction.ROW && y2 < this.props.size - 1) {
+        if (this.state.orientation === orientation.ROW && y2 < this.props.size - 1) {
            y2++;
-         } else if (this.state.direction === direction.COL && x2 < this.props.size - 1){
+         } else if (this.state.orientation === orientation.COL && x2 < this.props.size - 1){
            x2++;
         }
       } while (x2 < this.props.size - 2 && y2 < this.props.size - 2 && this.props.letters[x2][y2].isBlack);
 
       this.setState({
         "currentSquare" : [x2,y2],
-        "direction" : this.state.direction
+        "orientation" : this.state.orientation
       });
 
       //now change focus to new square
@@ -255,7 +256,7 @@ class Grid extends Component {
     if (!this.props.letters[x][y].isBlack) {
       this.setState({
         "currentSquare" : [x,y],
-        "direction" : this.state.direction
+        "orientation" : this.state.orientation
       })
     }
   }
@@ -316,13 +317,13 @@ class Clues extends Component {
     const acrossClues = this.props.clues.across;
     for (var key in acrossClues) {
       var clue = acrossClues[key];
-      across.push(this.renderClue(direction.ROW, key, clue));
+      across.push(this.renderClue(orientation.ROW, key, clue));
     }
     var down = [];
     const downClues = this.props.clues.down;
     for (var key in downClues) {
       var clue = downClues[key];
-      down.push(this.renderClue(direction.COL, key, clue));
+      down.push(this.renderClue(orientation.COL, key, clue));
     }
 
 
@@ -420,10 +421,10 @@ class Puzzle extends Component {
       });
     }
   }
-  handleClueChange(num,dir,key,value) {
+  handleClueChange(num,ori,key,value) {
     let cluesAcross = this.state.clues.across;
     let cluesDown = this.state.clues.down;
-    if (dir === direction.ROW) {
+    if (ori === orientation.ROW) {
       cluesAcross[key] = {
         "id" : num,
         "text": value
