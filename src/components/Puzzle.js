@@ -14,7 +14,7 @@ TODOs:
     take helper functions out of components, maybe?
     better variable names/style/etc
 - download!
-- don't highlight/focus when in square fill mode
+- hide cursor when in square fill mode
 - include some sort of tooltip/explanation of fill/letter modes
 - make it less laggy!
 - when a word is highlighted in grid, highlight corresponding clue (and vice versa)

@@ -29,7 +29,7 @@ function navigateHorizontal(x, y, letters, dir, size) {
   }
 
   if (letters[x][newY].isBlack) {
-    //we've hit start or end of row without finding a new square, so just stay put 
+    //we've hit start or end of row without finding a new square, so just stay put
     return y;
   } else {
     return newY;
@@ -116,6 +116,11 @@ class Grid extends Component {
     }
   }
   handleKeyDown(key) {
+    //ignore key down in block mode
+    if (this.props.mode === Mode.BLOCK) {
+      return;
+    }
+
     let newOrientation = this.state.orientation;
     let newSquare = this.state.currentSquare.slice();
     switch (key) {
@@ -195,9 +200,11 @@ class Grid extends Component {
   }
   renderSquare(x, y) {
     const isSelected =
+      (this.props.mode === Mode.TEXT &&
       (x===this.state.currentSquare[0]) &&
-      (y===this.state.currentSquare[1]);
-    const isWordSelected = (!isSelected && this.inSelectedWord(x,y));
+      (y===this.state.currentSquare[1]));
+    const isWordSelected = (this.props.mode === Mode.TEXT &&
+      !isSelected && this.inSelectedWord(x,y));
     return <Square squareValue={this.props.letters[x][y]}
       isSelected={isSelected}
       isWordSelected={isWordSelected}

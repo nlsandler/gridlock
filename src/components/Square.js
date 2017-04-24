@@ -8,13 +8,12 @@ class Square extends Component {
       classes += " black";
     }
 
-    //var classes = "text-center";
     if (this.props.isSelected) {
       classes += " highlight";
     } else if (this.props.isWordSelected) {
       classes += " weak-highlight";
     }
-          //<input className={classes}
+    
     return (
       <td className="square">
         <div className={classes}>
