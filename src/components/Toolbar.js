@@ -19,6 +19,10 @@ function Toolbar(props) {
         onClick={() => props.setMode(Mode.BLOCK)}/>
       <span className="glyphicon glyphicon-tint" />
     </label>
+    <button className="btn btn-primary"
+            onClick={() => props.download()}>
+      <span className="glyphicon glyphicon-save" />
+    </button>
   </div>
 };
 

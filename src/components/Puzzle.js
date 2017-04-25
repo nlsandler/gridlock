@@ -4,6 +4,7 @@ import Clues from './Clues';
 import Toolbar from './Toolbar';
 import PuzzleInfo from './PuzzleInfo';
 import { Orientation, Mode } from '../Common';
+import Download from '../Download';
 //import logo from './logo.svg';
 import '../App.css';
 
@@ -14,6 +15,8 @@ TODOs:
     take helper functions out of components, maybe?
     better variable names/style/etc
 - download!
+  -make sure it also works in windows (b/c newlines)
+- fix bug that sometimes prevents moving left
 - hide cursor when in square fill mode
 - include some sort of tooltip/explanation of fill/letter modes
 - make it less laggy!
@@ -233,12 +236,18 @@ class Puzzle extends Component {
       mode: this.state.mode,
     });
   }
+  download() {
+    //download the puzzle as an acrosslite file
+    Download(this.state.title, this.state.author, this.state.letters, this.state.clues);
+  }
   render() {
     return <div>
             <div className="container-fluid">
               <div className="row puzzle">
                 <div className="col-md-1">
-                  <Toolbar mode={this.state.mode} setMode={this.setMode.bind(this)} />
+                  <Toolbar mode={this.state.mode}
+                    setMode={this.setMode.bind(this)}
+                    download={this.download.bind(this)}/>
                 </div>
                 <div className="col-md-5">
                     <PuzzleInfo title={this.state.title} author={this.state.author}
