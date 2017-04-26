@@ -125,9 +125,9 @@ class Grid extends Component {
     let newSquare = this.state.currentSquare.slice();
     switch (key) {
       case "Backspace":
-        [newOrientation, newSquare] = navigate(newOrientation, direction.BACK,
-          newOrientation, newSquare, this.props, this.props.letters, this.props.size);
         this.props.handleBackSpace(newSquare[0],newSquare[1]);
+        [newOrientation, newSquare] = navigate(newOrientation, direction.BACK,
+          newOrientation, newSquare, this.props.letters, this.props.size);
         break;
       case "ArrowLeft":
         [newOrientation, newSquare] = navigate(Orientation.ROW, direction.BACK,
