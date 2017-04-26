@@ -8,26 +8,6 @@ import Download from '../Download';
 //import logo from './logo.svg';
 import '../App.css';
 
-/*
-TODOs:
-- refactor
-    reorganize each component
-    take helper functions out of components, maybe?
-    better variable names/style/etc
-- 'start over' button
-- change edit mode back to toggle/radio buttons
-- rule enforcement (word length, % black squares)
-- make sure download also works on windows (b/c newlines)
-- fix bug that sometimes prevents moving left
-- hide cursor when in square fill mode
-- include some sort of tooltip/explanation of fill/letter modes
-- make it less laggy!
-- when a word is highlighted in grid, highlight corresponding clue (and vice versa)
-- accessibility
-
-- maybe make across/down clues scrollable?
-*/
-
 /* Helpers for clue numbers */
 function needsAcrossClue(x, y, letters) {
   if (letters[x][y].isBlack) {
