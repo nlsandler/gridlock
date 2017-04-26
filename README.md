@@ -1,4 +1,4 @@
-##Gridlock Crossword Constructor
+# Gridlock Crossword Constructor
 
 A ReactJS app for creating American newspaper-style crosswords.
 
