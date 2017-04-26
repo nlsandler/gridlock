@@ -4,8 +4,8 @@ import { Orientation } from '../Common';
 function Clue(props) {
     return <li className="clue">
       <div className="input-group">
-      <div className="input-group-addon">{props.clue.id}</div>
-      <input className="form-control" value={props.clue.text} onChange={(evt) => props.handleChange(evt.target.value)}/>
+        <div className="input-group-addon">{props.clue.id}</div>
+        <input className="form-control" value={props.clue.text} onChange={(evt) => props.handleChange(evt.target.value)}/>
       </div>
     </li>;
 };

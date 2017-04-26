@@ -109,7 +109,6 @@ function initialState(size) {
   }
 }
 
-
 class Puzzle extends Component {
   constructor(props) {
     super(props);
@@ -256,7 +255,5 @@ class Puzzle extends Component {
           </div>;
     }
   }
-
-
 
 export default Puzzle;
