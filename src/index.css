@@ -6,21 +6,33 @@ body {
 
 /* Toolbar Styling */
 .toolbar .btn.btn-primary {
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  box-shadow: none !important;
-  border: solid 1px #ddd;
-  margin: 2px;
-  background: white;
-  color: black;
-  text-shadow: none;
+  border: none;
+  box-shadow: 2px 1px 4px #dddddd;
+  margin-bottom: 0.5em;
+  margin-top: 0.5em;
+  border-radius: 2px;
 }
 
-.toolbar .btn.btn-primary.active {
-  background-color: #286090;
-  border: none;
+.toolbar label.btn.btn-primary,
+.toolbar label.btn.btn-primary.active {
+  width: 35px;
+  height: 35px;
+  z-index: 0;
+}
+
+.toolbar label.btn.btn-primary {
+  background: #eee;
+  color: black;
+}
+
+.toolbar label.btn.btn-primary.active {
+  background: #428bca;
   color: white;
+}
+
+.toolbar button.btn.btn-primary {
+  background: #428bca;
+  width: 70px;
 }
 
 .toolbar .btn span.glyphicon {

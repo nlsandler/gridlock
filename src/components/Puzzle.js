@@ -14,8 +14,10 @@ TODOs:
     reorganize each component
     take helper functions out of components, maybe?
     better variable names/style/etc
-- download!
-  -make sure it also works in windows (b/c newlines)
+- 'start over' button
+- change edit mode back to toggle/radio buttons
+- rule enforcement (word length, % black squares)
+- make sure download also works on windows (b/c newlines)
 - fix bug that sometimes prevents moving left
 - hide cursor when in square fill mode
 - include some sort of tooltip/explanation of fill/letter modes
@@ -26,6 +28,108 @@ TODOs:
 - maybe make across/down clues scrollable?
 */
 
+/* Helpers for clue numbers */
+function needsAcrossClue(x, y, letters) {
+  if (letters[x][y].isBlack) {
+    return false;
+  }
+  if (y === 0) {
+    return true;
+  }
+
+  if (letters[x][y-1].isBlack) {
+      return true;
+  }
+  return false;
+}
+
+function needsDownClue(x, y, letters) {
+  if (letters[x][y].isBlack) {
+    return false;
+  }
+
+  if (x === 0) {
+    return true;
+  }
+
+  if (letters[x-1][y].isBlack) {
+      return true;
+  }
+  return false;
+}
+
+
+function generateClueNumbers(letters, numberlessClues, size) {
+  //add clue numbers to letters in grid and to clues in map
+  let clues = {
+    "across" : {},
+    "down" : {}
+  }
+  var currentClueNum = 1;
+
+  for (var x = 0; x < size; x++) {
+    for (var y = 0; y < size; y++) {
+      let clueKey = [x,y].toString();
+
+      let needsAcross = needsAcrossClue(x, y, letters);
+
+      if (needsAcross) {
+        let acrossClue = numberlessClues.across[clueKey];
+        if (!acrossClue) {
+          acrossClue = { "text" : "" };
+        }
+        acrossClue.id = currentClueNum;
+        clues.across[clueKey] = acrossClue;
+      }
+
+      let needsDown = needsDownClue(x, y, letters);
+
+      if (needsDown) {
+        let downClue = numberlessClues.down[clueKey];
+        if (!downClue) {
+          downClue = {"text":""};
+        }
+        downClue.id = currentClueNum;
+        clues.down[clueKey] = downClue;
+      }
+
+      let gridNum = null;
+      if (needsAcross || needsDown) {
+        gridNum = currentClueNum;
+        currentClueNum++;
+      }
+
+      letters[x][y] = {
+        "char": letters[x][y].char,
+        "isBlack" : letters[x][y].isBlack,
+        "clueNum": gridNum
+      };
+    }
+  }
+
+  return [letters, clues];
+}
+
+function initialState(size) {
+  let letters = Array(size).fill().map(() => Array(size).fill({
+    "isBlack" : false,
+    "char" : ""
+  }));
+  let clues = {
+    "across" : {},
+    "down" : {}
+  };
+  let [numberedLetters, numberedClues] = generateClueNumbers(letters, clues, size);
+  return {
+    "title" : "",
+    "author" : "",
+    "letters" : numberedLetters,
+    "clues" : numberedClues,
+    "mode" : Mode.TEXT
+  }
+}
+
+
 class Puzzle extends Component {
   constructor(props) {
     super(props);
@@ -34,114 +138,15 @@ class Puzzle extends Component {
     if (puzzleState) {
       this.state = JSON.parse(puzzleState);
     } else {
-      //initialize array of letters
-      let letters = Array(this.props.size).fill().map(() => Array(this.props.size).fill({
-        "isBlack" : false,
-        "char" : ""
-      }));
-      let clues = {
-        "across" : {},
-        "down" : {}
-      };
-      this.state = {
-        "letters" : letters,
-        "clues" : clues
-      }
-      //initialize clue numbers
-      let [numberedLetters, numberedClues] = this.generateClueNumbers();
-      this.state = {
-        "title" : "",
-        "author" : "",
-        "letters" : numberedLetters,
-        "clues" : numberedClues,
-        "mode" : Mode.TEXT
-      }
+      this.state = initialState(this.props.size);
     }
   }
   componentDidUpdate(prevProps, prevState) {
     localStorage.setItem('puzzle', JSON.stringify(this.state));
   }
-  /* Helpers for clue numbers */
-  needsAcrossClue(x, y) {
-    if (this.state.letters[x][y].isBlack) {
-      return false;
-    }
-    if (y === 0) {
-      return true;
-    }
-
-    if (this.state.letters[x][y-1].isBlack) {
-        return true;
-    }
-    return false;
-  }
-  needsDownClue(x, y) {
-    if (this.state.letters[x][y].isBlack) {
-      return false;
-    }
-
-    if (x === 0) {
-      return true;
-    }
-
-    if (this.state.letters[x-1][y].isBlack) {
-        return true;
-    }
-    return false;
-  }
-  generateClueNumbers() {
-    //add clue numbers to letters in grid and to clues in map
-    let letters = this.state.letters.slice();
-    let clues = {
-      "across" : {},
-      "down" : {}
-    }
-    var currentClueNum = 1;
-
-    for (var x = 0; x < this.props.size; x++) {
-      for (var y = 0; y < this.props.size; y++) {
-        let clueKey = [x,y].toString();
-
-        let needsAcross = this.needsAcrossClue(x, y);
-
-        if (needsAcross) {
-          let acrossClue = this.state.clues.across[clueKey];
-          if (!acrossClue) {
-            acrossClue = { "text" : "" };
-          }
-          acrossClue.id = currentClueNum;
-          clues.across[clueKey] = acrossClue;
-        }
-
-        let needsDown = this.needsDownClue(x, y);
-
-        if (needsDown) {
-          let downClue = this.state.clues.down[clueKey];
-          if (!downClue) {
-            downClue = {"text":""};
-          }
-          downClue.id = currentClueNum;
-          clues.down[clueKey] = downClue;
-        }
-
-        let gridNum = null;
-        if (needsAcross || needsDown) {
-          gridNum = currentClueNum;
-          currentClueNum++;
-        }
-
-        letters[x][y] = {
-          "char": letters[x][y].char,
-          "isBlack" : letters[x][y].isBlack,
-          "clueNum": gridNum
-        };
-      }
-    }
-
-    return [letters, clues];
-  }
   updateLetters(letters) {
-    var [numberedLetters, numberedClues] = this.generateClueNumbers();
+    var [numberedLetters, numberedClues] = generateClueNumbers(
+      this.state.letters, this.state.clues, this.props.size);
     this.setState({
       title: this.state.title,
       author: this.state.author,
@@ -240,6 +245,9 @@ class Puzzle extends Component {
     //download the puzzle as an acrosslite file
     Download(this.state.title, this.state.author, this.state.letters, this.state.clues);
   }
+  clearPuzzle() {
+    this.setState(initialState(this.props.size));
+  }
   render() {
     return <div>
             <div className="container-fluid">
@@ -247,7 +255,8 @@ class Puzzle extends Component {
                 <div className="col-md-1">
                   <Toolbar mode={this.state.mode}
                     setMode={this.setMode.bind(this)}
-                    download={this.download.bind(this)}/>
+                    download={this.download.bind(this)}
+                    clearPuzzle={this.clearPuzzle.bind(this)}/>
                 </div>
                 <div className="col-md-5">
                     <PuzzleInfo title={this.state.title} author={this.state.author}
