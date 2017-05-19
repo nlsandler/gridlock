@@ -151,7 +151,11 @@ class Puzzle extends Component {
       //enforce diagonal symmetry - fill in symmetrical square too!
       const xprime = this.props.size - x - 1;
       const yprime = this.props.size - y - 1;
-      letters[xprime][yprime] = {"char":"", "isBlack" : !(letters[xprime][yprime].isBlack)};
+      //if square is in the exact center of the grid
+      //symmetrical square will be the same square, so don't change it
+      if (!(x === xprime && y === yprime )) {
+        letters[xprime][yprime] = {"char":"", "isBlack" : !(letters[xprime][yprime].isBlack)};
+      }
       this.updateLetters(letters);
     }
   }
