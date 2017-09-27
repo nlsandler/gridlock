@@ -5,6 +5,7 @@ import Toolbar from './Toolbar';
 import PuzzleInfo from './PuzzleInfo';
 import { Orientation, Mode } from '../Common';
 import Download from '../Download';
+import { Modal } from 'react-bootstrap';
 //import logo from './logo.svg';
 import '../App.css';
 
@@ -90,7 +91,7 @@ function generateClueNumbers(letters, numberlessClues, size) {
   return [letters, clues];
 }
 
-function initialState(size) {
+function initializeStateForSize(size) {
   let letters = Array(size).fill().map(() => Array(size).fill({
     "isBlack" : false,
     "char" : ""
@@ -103,6 +104,8 @@ function initialState(size) {
   return {
     "title" : "",
     "author" : "",
+    "newPuzzle": false,
+    "size": size,
     "letters" : numberedLetters,
     "clues" : numberedClues,
     "mode" : Mode.TEXT
@@ -117,7 +120,9 @@ class Puzzle extends Component {
     if (puzzleState) {
       this.state = JSON.parse(puzzleState);
     } else {
-      this.state = initialState(this.props.size);
+      this.state = {
+        newPuzzle: true
+      }
     }
   }
   componentDidUpdate(prevProps, prevState) {
@@ -229,35 +234,64 @@ class Puzzle extends Component {
     Download(this.state.title, this.state.author, this.state.letters, this.state.clues);
   }
   clearPuzzle() {
-    this.setState(initialState(this.props.size));
+    this.setState({
+      "newPuzzle": true
+    });
   }
   render() {
-    return <div>
-            <div className="container-fluid">
-              <div className="row puzzle">
-                <div className="col-md-1">
-                  <Toolbar mode={this.state.mode}
-                    setMode={this.setMode.bind(this)}
-                    download={this.download.bind(this)}
-                    clearPuzzle={this.clearPuzzle.bind(this)}/>
-                </div>
-                <div className="col-md-5">
-                    <PuzzleInfo title={this.state.title} author={this.state.author}
-                    updateAuthor={(value) => this.updateAuthor(value)}
-                    updateTitle={(value) => this.updateTitle(value)}/>
-                    <Grid size={this.props.size} mode={this.state.mode}
-                      letters={this.state.letters}
-                      handleKeyPress={(x,y,c) => this.handleKeyPress(x,y,c)}
-                      handleBackSpace={(x,y) => this.handleBackSpace(x,y)}
-                      handleClick={(x,y) => this.handleClick(x,y)}/>
-                </div>
-                <div className="col-md-6">
-                  <Clues clues={this.state.clues} handleChange={(num, dir, key, value) => this.handleClueChange(num, dir, key, value)}/>
+    if (this.state.newPuzzle) {
+      return <Modal show={this.state.newPuzzle}>
+              <Modal.Header>New Puzzle</Modal.Header>
+              <Modal.Body>
+                Choose the dimensions for your puzzle.
+                <input type="number"
+                  id="puzzle-dimension"
+                  min={"9"}
+                  max={"100"}
+                  defaultValue={"15"}>
+                </input>
+              </Modal.Body>
+              <Modal.Footer>
+                <button className="btn"
+                  onClick={() =>
+                    this.setState(
+                      initializeStateForSize(
+                        parseInt(
+                          document.getElementById("puzzle-dimension").value
+                        )
+                      )
+                    )
+                  }>Okay</button>
+              </Modal.Footer>
+            </Modal>
+    } else {
+      return <div>
+              <div className="container-fluid">
+                <div className="row puzzle">
+                  <div className="col-md-1">
+                    <Toolbar mode={this.state.mode}
+                      setMode={this.setMode.bind(this)}
+                      download={this.download.bind(this)}
+                      clearPuzzle={this.clearPuzzle.bind(this)}/>
+                  </div>
+                  <div className="col-md-5">
+                      <PuzzleInfo title={this.state.title} author={this.state.author}
+                      updateAuthor={(value) => this.updateAuthor(value)}
+                      updateTitle={(value) => this.updateTitle(value)}/>
+                      <Grid size={this.state.size} mode={this.state.mode}
+                        letters={this.state.letters}
+                        handleKeyPress={(x,y,c) => this.handleKeyPress(x,y,c)}
+                        handleBackSpace={(x,y) => this.handleBackSpace(x,y)}
+                        handleClick={(x,y) => this.handleClick(x,y)}/>
+                  </div>
+                  <div className="col-md-6">
+                    <Clues clues={this.state.clues} handleChange={(num, dir, key, value) => this.handleClueChange(num, dir, key, value)}/>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>;
+            </div>;
     }
   }
+}
 
 export default Puzzle;

@@ -54,10 +54,10 @@ class Toolbar extends Component {
       <Modal show={this.state.showModal}
         onHide={() => this.closeModal()}>
         <Modal.Header closeButton>
-          <Modal.Title>Start Over?</Modal.Title>
+          <Modal.Title>New Puzzle?</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to start over? Your current puzzle will be lost!
+          Are you sure you want to start a new puzzle? Your current puzzle will be lost!
         </Modal.Body>
         <Modal.Footer>
           <button className="btn"
