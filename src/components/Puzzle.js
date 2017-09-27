@@ -130,7 +130,7 @@ class Puzzle extends Component {
   }
   updateLetters(letters) {
     var [numberedLetters, numberedClues] = generateClueNumbers(
-      this.state.letters, this.state.clues, this.props.size);
+      this.state.letters, this.state.clues, this.state.size);
     this.setState({
       title: this.state.title,
       author: this.state.author,
@@ -154,8 +154,8 @@ class Puzzle extends Component {
       //fill in specified square
       letters[x][y] = {"char" : "", "isBlack": !(letters[x][y].isBlack)};
       //enforce diagonal symmetry - fill in symmetrical square too!
-      const xprime = this.props.size - x - 1;
-      const yprime = this.props.size - y - 1;
+      const xprime = this.state.size - x - 1;
+      const yprime = this.state.size - y - 1;
       //if square is in the exact center of the grid
       //symmetrical square will be the same square, so don't change it
       if (!(x === xprime && y === yprime )) {
