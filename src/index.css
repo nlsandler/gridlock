@@ -39,6 +39,10 @@ body {
   vertical-align: middle;
 }
 
+.toolbar .btn-group {
+  display: flex;
+}
+
 /* Style Modal buttons the same as toolbar buttons */
 .modal-footer button.btn {
   border: none;
