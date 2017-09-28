@@ -88,9 +88,9 @@ class Grid extends Component {
     if (this.state.orientation === Orientation.ROW) {
       if (x === this.state.currentSquare[0]) {
         //make sure there are no black squares between currentSquare and this square
-        for (var idx = Math.min(y, this.state.currentSquare[1]);
-          idx < Math.max(y, this.state.currentSquare[1]); idx++) {
-            if (this.props.letters[x][idx].isBlack) {
+        for (var y_idx = Math.min(y, this.state.currentSquare[1]);
+          y_idx < Math.max(y, this.state.currentSquare[1]); y_idx++) {
+            if (this.props.letters[x][y_idx].isBlack) {
               return false;
             }
           }
@@ -102,9 +102,9 @@ class Grid extends Component {
     } else {
       if (y === this.state.currentSquare[1]) {
         //make sure there are no black squares between currentSquare and this square
-        for (var idx = Math.min(x, this.state.currentSquare[0]);
-          idx < Math.max(x, this.state.currentSquare[0]); idx++) {
-            if (this.props.letters[idx][y].isBlack) {
+        for (var x_idx = Math.min(x, this.state.currentSquare[0]);
+          x_idx < Math.max(x, this.state.currentSquare[0]); x_idx++) {
+            if (this.props.letters[x_idx][y].isBlack) {
               return false;
             }
           }
@@ -206,6 +206,7 @@ class Grid extends Component {
     const isWordSelected = (this.props.mode === Mode.TEXT &&
       !isSelected && this.inSelectedWord(x,y));
     return <Square squareValue={this.props.letters[x][y]}
+      gridSize={this.props.size}
       isSelected={isSelected}
       isWordSelected={isWordSelected}
       handleKeyPress={(char) => this.handleKeyPress(char)}

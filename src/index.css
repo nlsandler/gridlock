@@ -133,7 +133,6 @@ table.table {
 }
 
 table.table > tbody > tr > td.square {
-  width: 6.67%;
   position: relative;
   border: 1px black solid;
 }
@@ -175,10 +174,6 @@ span.clueNum {
   top: 0px;
   left: 1px;
   z-index: 3;
-}
-
-span.clueNum sup {
-  font-size: 65%;
 }
 
 .black {

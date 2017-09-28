@@ -257,7 +257,8 @@ class Puzzle extends Component {
                     this.setState(
                       initializeStateForSize(
                         parseInt(
-                          document.getElementById("puzzle-dimension").value
+                          document.getElementById("puzzle-dimension").value,
+                          10
                         )
                       )
                     )

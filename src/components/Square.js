@@ -13,12 +13,23 @@ class Square extends Component {
     } else if (this.props.isWordSelected) {
       classes += " weak-highlight";
     }
-    
+
+    var widthStyle = {
+      width: 100/this.props.gridSize + "%"
+    };
+
+    var clueNumStyle = {
+      fontSize: 90 - 2*this.props.gridSize + "%",
+      top: -this.props.gridSize/15+"em"
+    }
+
     return (
-      <td className="square">
+      <td className="square" style={widthStyle}>
         <div className={classes}>
-          <span className="clueNum"><sup>{this.props.squareValue.clueNum}</sup></span>
-            <input className="text-center"
+          <span className="clueNum">
+            <sup style={clueNumStyle}>{this.props.squareValue.clueNum}</sup>
+          </span>
+          <input className="text-center"
             ref="input"
             value={this.props.squareValue.char}
             onKeyPress={(evt) => this.props.handleKeyPress(evt.key)}
